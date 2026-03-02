@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Sample Invoices</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="data.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; padding: 40px; background: #f5f5f5; }
+    h1 { margin-bottom: 20px; }
+    .btn { display: inline-block; padding: 12px 24px; background: #4F46E5; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 8px; }
+    .btn:hover { background: #3730A3; }
+    .status { margin-top: 20px; padding: 12px; background: #fff; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Generate Sample Invoice PDFs</h1>
+  <p>Click the button below to generate and download all 6 sample invoices as PDF files.</p>
+  <button class="btn" onclick="generateAll()">Generate All 6 Invoices</button>
+  <div class="status" id="status"></div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+
+    function generateInvoicePDF(invoice) {
+      const doc = new jsPDF();
+      const vendor = VENDORS[invoice.vendorId];
+      let y = 20;
+
+      // Header
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('TAX INVOICE', 105, y, { align: 'center' });
+      y += 12;
+
+      // Vendor info
+      doc.setFontSize(14);
+      doc.text(invoice.vendorName, 14, y);
+      y += 7;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`GSTIN: ${invoice.vendorGstin}`, 14, y);
+      y += 5;
+      doc.text(`State: ${vendor.state}`, 14, y);
+      y += 10;
+
+      // Invoice details - right side
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Invoice #: ${invoice.id}`, 130, 39);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${invoice.invoiceDate}`, 130, 45);
+      doc.text(`Due Date: ${invoice.dueDate}`, 130, 51);
+      doc.text(`PO Ref: ${invoice.poId}`, 130, 57);
+
+      // Line
+      doc.setDrawColor(200);
+      doc.line(14, y, 196, y);
+      y += 8;
+
+      // Bill To
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text('Bill To:', 14, y);
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.text('AAYS Advisory Private Limited', 14, y);
+      y += 5;
+      doc.text('Gurugram, Haryana', 14, y);
+      y += 5;
+      doc.text('GSTIN: 06AAACA1234B1Z5', 14, y);
+      y += 12;
+
+      // Table header
+      doc.setFillColor(79, 70, 229);
+      doc.rect(14, y, 182, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('S.No', 16, y + 6);
+      doc.text('Item Code', 28, y + 6);
+      doc.text('Description', 56, y + 6);
+      doc.text('Qty', 115, y + 6);
+      doc.text('Unit', 128, y + 6);
+      doc.text('Rate', 145, y + 6);
+      doc.text('Amount', 170, y + 6);
+      y += 12;
+
+      // Table rows
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      invoice.items.forEach((item, i) => {
+        if (i % 2 === 0) {
+          doc.setFillColor(245, 243, 255);
+          doc.rect(14, y - 4, 182, 8, 'F');
+        }
+        doc.text(`${i + 1}`, 16, y + 2);
+        doc.text(item.code, 28, y + 2);
+        doc.text(item.description.substring(0, 30), 56, y + 2);
+        doc.text(`${item.quantity}`, 115, y + 2);
+        doc.text(item.unit, 128, y + 2);
+        doc.text(`${item.unitPrice.toLocaleString('en-IN')}`, 145, y + 2);
+        doc.text(`${item.amount.toLocaleString('en-IN')}`, 170, y + 2);
+        y += 8;
+      });
+
+      y += 4;
+      doc.line(14, y, 196, y);
+      y += 8;
+
+      // Totals
+      const totalsX = 140;
+      doc.setFont('helvetica', 'normal');
+      doc.text('Subtotal:', totalsX, y);
+      doc.text(`Rs. ${invoice.subtotal.toLocaleString('en-IN')}`, 175, y, { align: 'right' });
+      y += 6;
+
+      doc.text(`CGST (${invoice.gstRate / 2}%):`, totalsX, y);
+      doc.text(`Rs. ${invoice.cgst.toLocaleString('en-IN')}`, 175, y, { align: 'right' });
+      y += 6;
+
+      doc.text(`SGST (${invoice.gstRate / 2}%):`, totalsX, y);
+      doc.text(`Rs. ${invoice.sgst.toLocaleString('en-IN')}`, 175, y, { align: 'right' });
+      y += 8;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setFillColor(79, 70, 229);
+      doc.rect(totalsX - 4, y - 5, 60, 10, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.text('TOTAL:', totalsX, y + 2);
+      doc.text(`Rs. ${invoice.total.toLocaleString('en-IN')}`, 192, y + 2, { align: 'right' });
+
+      y += 20;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.text('Terms & Conditions:', 14, y);
+      y += 5;
+      doc.text('1. Payment is due as per the agreed terms mentioned in the Purchase Order.', 14, y);
+      y += 4;
+      doc.text('2. Please quote the invoice number in all correspondence.', 14, y);
+      y += 4;
+      doc.text('3. Subject to jurisdiction of local courts.', 14, y);
+
+      y += 15;
+      doc.setFont('helvetica', 'bold');
+      doc.text('Authorized Signatory', 150, y);
+      doc.line(140, y - 8, 196, y - 8);
+
+      return doc;
+    }
+
+    function generateAll() {
+      const status = document.getElementById('status');
+      status.innerHTML = '';
+
+      Object.entries(INVOICES).forEach(([id, invoice]) => {
+        const doc = generateInvoicePDF(invoice);
+        const filename = `${id}.pdf`;
+        doc.save(filename);
+        status.innerHTML += `<div>Generated: ${filename}</div>`;
+      });
+
+      status.innerHTML += '<br><strong>All 6 invoices generated! Check your downloads folder.</strong>';
+    }
+  </script>
+</body>
+</html>

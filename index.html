@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvoiceAI — Intelligent Invoice Validation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ========== NAV ========== -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-icon">
+          <span class="material-icons-round">receipt_long</span>
+        </div>
+        <span class="brand-name">Invoice<span class="brand-accent">AI</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#demo">Try Demo</a>
+        <a href="#dashboard">Dashboard</a>
+        <button class="btn btn-primary btn-sm" onclick="toggleChat()">
+          <span class="material-icons-round" style="font-size:16px">smart_toy</span>
+          AI Assistant
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <div class="hero-bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-badge">AI-Powered Invoice Validation</div>
+      <h1 class="hero-title">
+        From Invoice Capture<br>
+        to Validation in <span class="gradient-text">Minutes</span>
+      </h1>
+      <p class="hero-subtitle">
+        Remove the manual detective work from invoice validation. Our AI engine matches invoices against POs and contracts in real-time — catching price deviations, quantity mismatches, and tax errors before they become payment surprises.
+      </p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary btn-lg">
+          <span class="material-icons-round">play_circle</span>
+          Try Live Demo
+        </a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">
+          <span class="material-icons-round">info</span>
+          How It Works
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">&lt; 30s</div>
+          <div class="stat-label">Extraction Time</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">99.2%</div>
+          <div class="stat-label">Match Accuracy</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">85%</div>
+          <div class="stat-label">Time Saved</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">0</div>
+          <div class="stat-label">Payment Surprises</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW IT WORKS ========== -->
+  <section id="how-it-works" class="section how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">The Process</div>
+        <h2>How It Works</h2>
+        <p>Four simple steps from invoice capture to validated payment</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon capture-icon">
+            <span class="material-icons-round">photo_camera</span>
+          </div>
+          <h3>Capture</h3>
+          <p>Snap a photo via WhatsApp or upload the invoice PDF/image directly. Works with any format — handwritten, printed, or digital.</p>
+        </div>
+        <div class="step-connector"><span class="material-icons-round">arrow_forward</span></div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon extract-icon">
+            <span class="material-icons-round">psychology</span>
+          </div>
+          <h3>AI Extraction</h3>
+          <p>Our AI reads the invoice in seconds — pulling vendor details, line items, quantities, prices, tax breakdowns, and totals automatically.</p>
+        </div>
+        <div class="step-connector"><span class="material-icons-round">arrow_forward</span></div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon match-icon">
+            <span class="material-icons-round">compare_arrows</span>
+          </div>
+          <h3>Smart Match</h3>
+          <p>The system auto-pulls PO and Contract data, running tolerance-based checks on price, quantity, and tax against your rules.</p>
+        </div>
+        <div class="step-connector"><span class="material-icons-round">arrow_forward</span></div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon action-icon">
+            <span class="material-icons-round">task_alt</span>
+          </div>
+          <h3>Action</h3>
+          <p>Matched? Payment workflow triggers. Mismatch? Instant email alert to the team with exact deviations highlighted for quick resolution.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DEMO SECTION ========== -->
+  <section id="demo" class="section demo-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Live Demo</div>
+        <h2>Try It Now</h2>
+        <p>Upload a sample invoice or pick from our pre-loaded examples to see the AI engine in action</p>
+      </div>
+
+      <!-- Sample Invoice Selector -->
+      <div class="sample-selector">
+        <h3><span class="material-icons-round">folder_open</span> Sample Invoices for Demo</h3>
+        <p class="sample-hint">Click any invoice below to simulate an upload, or drag &amp; drop your own file</p>
+        <div class="sample-grid" id="sampleGrid"></div>
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-content">
+          <div class="upload-icon">
+            <span class="material-icons-round">cloud_upload</span>
+          </div>
+          <h3>Drop Invoice Here</h3>
+          <p>Drag &amp; drop a PDF or image, or <label for="fileInput" class="upload-link">browse files</label></p>
+          <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" hidden>
+          <div class="upload-formats">
+            <span class="format-tag">PDF</span>
+            <span class="format-tag">PNG</span>
+            <span class="format-tag">JPG</span>
+            <span class="format-tag">WhatsApp Photo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing Animation -->
+      <div class="processing-panel" id="processingPanel" style="display:none">
+        <div class="processing-header">
+          <div class="ai-pulse"></div>
+          <h3 id="processingTitle">AI Processing Invoice...</h3>
+        </div>
+        <div class="processing-steps">
+          <div class="proc-step" id="procStep1"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Scanning &amp; reading document...</span></div>
+          <div class="proc-step" id="procStep2"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Extracting vendor, line items &amp; tax details...</span></div>
+          <div class="proc-step" id="procStep3"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Auto-fetching linked Purchase Order...</span></div>
+          <div class="proc-step" id="procStep4"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Loading Contract agreement for vendor...</span></div>
+          <div class="proc-step" id="procStep5"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Running 3-way tolerance matching...</span></div>
+          <div class="proc-step" id="procStep6"><span class="material-icons-round proc-icon">hourglass_empty</span><span>Generating validation report...</span></div>
+        </div>
+        <div class="processing-bar"><div class="processing-bar-fill" id="processingBarFill"></div></div>
+      </div>
+
+      <!-- Live Comparison Panel (shown during processing) -->
+      <div class="live-comparison" id="liveComparison" style="display:none">
+        <div class="live-comparison-header">
+          <span class="material-icons-round">compare_arrows</span>
+          <h3>3-Way Document Comparison</h3>
+        </div>
+        <div class="three-docs-grid">
+          <div class="doc-preview" id="docInvoice">
+            <div class="doc-preview-header invoice-color"><span class="material-icons-round">description</span> Invoice</div>
+            <div class="doc-preview-body" id="docInvoiceBody"><div class="doc-loading">Waiting for extraction...</div></div>
+          </div>
+          <div class="doc-preview" id="docPO">
+            <div class="doc-preview-header po-color"><span class="material-icons-round">shopping_cart</span> Purchase Order</div>
+            <div class="doc-preview-body" id="docPOBody"><div class="doc-loading">Fetching PO...</div></div>
+          </div>
+          <div class="doc-preview" id="docContract">
+            <div class="doc-preview-header contract-color"><span class="material-icons-round">handshake</span> Contract</div>
+            <div class="doc-preview-body" id="docContractBody"><div class="doc-loading">Fetching contract...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DASHBOARD ========== -->
+  <section id="dashboard" class="section dashboard-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Overview</div>
+        <h2>Validation Dashboard</h2>
+        <p>Real-time view of all processed invoices and their validation status</p>
+      </div>
+      <div class="dashboard-stats">
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon green"><span class="material-icons-round">check_circle</span></div>
+          <div class="dash-stat-info"><div class="dash-stat-number" id="statMatched">0</div><div class="dash-stat-label">Matched</div></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon red"><span class="material-icons-round">error</span></div>
+          <div class="dash-stat-info"><div class="dash-stat-number" id="statMismatched">0</div><div class="dash-stat-label">Mismatched</div></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon blue"><span class="material-icons-round">summarize</span></div>
+          <div class="dash-stat-info"><div class="dash-stat-number" id="statTotal">0</div><div class="dash-stat-label">Total Processed</div></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-icon orange"><span class="material-icons-round">currency_rupee</span></div>
+          <div class="dash-stat-info"><div class="dash-stat-number" id="statDeviation">0</div><div class="dash-stat-label">Total Deviation</div></div>
+        </div>
+      </div>
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th><th>Vendor</th><th>PO #</th><th>Invoice Amt</th><th>PO Amt</th><th>Deviation</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="dashboardBody">
+            <tr class="empty-row"><td colspan="8"><div class="empty-state"><span class="material-icons-round">inbox</span><p>No invoices processed yet. Upload an invoice above to get started.</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESULT POPUP MODAL ========== -->
+  <div class="modal-overlay" id="resultModal" style="display:none">
+    <div class="modal modal-xl">
+      <div class="modal-header" id="resultModalHeader">
+        <div class="modal-icon" id="resultModalIcon"><span class="material-icons-round">check_circle</span></div>
+        <h3 id="resultModalTitle">Validation Result</h3>
+        <button class="modal-close" onclick="closeResultModal()"><span class="material-icons-round">close</span></button>
+      </div>
+      <div class="modal-body" id="resultModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ========== EMAIL ALERT MODAL ========== -->
+  <div class="modal-overlay" id="emailModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-icon red"><span class="material-icons-round">mark_email_unread</span></div>
+        <h3>Deviation Alert Email Sent</h3>
+        <button class="modal-close" onclick="closeEmailModal()"><span class="material-icons-round">close</span></button>
+      </div>
+      <div class="modal-body" id="emailModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ========== AI CHAT PANEL ========== -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-avatar"><span class="material-icons-round">smart_toy</span></div>
+        <div>
+          <div class="chat-title">InvoiceAI Assistant</div>
+          <div class="chat-subtitle">Ask about POs, Contracts &amp; Invoices</div>
+        </div>
+      </div>
+      <button class="chat-close" onclick="toggleChat()"><span class="material-icons-round">close</span></button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="chat-msg-avatar"><span class="material-icons-round">smart_toy</span></div>
+        <div class="chat-msg-bubble">
+          Hi! I'm your InvoiceAI assistant. I can help you with:
+          <ul>
+            <li>Details about any <strong>Purchase Order</strong></li>
+            <li>Information from <strong>Contracts</strong></li>
+            <li>Invoice validation <strong>results</strong></li>
+            <li><strong>Compare</strong> prices, quantities, and terms</li>
+          </ul>
+          Try asking: <em>"What's the total for PO-2025-1001?"</em> or <em>"Show me deviations in Kumar Logistics invoice"</em>
+        </div>
+      </div>
+    </div>
+    <div class="chat-suggestions" id="chatSuggestions">
+      <button onclick="sendSuggestion('Show all POs and their amounts')">Show all POs</button>
+      <button onclick="sendSuggestion('What contracts do we have?')">List contracts</button>
+      <button onclick="sendSuggestion('Compare INV-KL-2025-0872 with its PO')">Compare invoice vs PO</button>
+      <button onclick="sendSuggestion('Which invoices have deviations?')">Show deviations</button>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Ask about POs, contracts, invoices..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()"><span class="material-icons-round">send</span></button>
+    </div>
+  </div>
+
+  <!-- Chat Toggle FAB -->
+  <button class="chat-fab" id="chatFab" onclick="toggleChat()">
+    <span class="material-icons-round">smart_toy</span>
+  </button>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="brand-icon small"><span class="material-icons-round">receipt_long</span></div>
+          <span class="brand-name">Invoice<span class="brand-accent">AI</span></span>
+        </div>
+        <p class="footer-text">AI-powered Invoice-PO-Contract matching for logistics teams. Built for the real world.</p>
+        <p class="footer-copy">Demo Version &mdash; AAYS Advisory Private Limited</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+  <script src="chat-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
