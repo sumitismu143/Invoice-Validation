@@ -90,8 +90,11 @@ class ChatEngine {
 
     let response = '';
 
+    if (this.isGreeting(q) || this.isSmallTalk(q)) {
+      response = this.handleSmallTalk(q);
+    }
     // ---- ROUTE: List all POs ----
-    if (this.matches(q, ['show all po', 'list po', 'all purchase order', 'show po', 'what po', 'how many po'])) {
+    else if (this.matches(q, ['show all po', 'list po', 'all purchase order', 'show po', 'what po', 'how many po'])) {
       response = this.listAllPOs();
     }
     // ---- ROUTE: List all Contracts ----
@@ -164,6 +167,40 @@ class ChatEngine {
   // ---- MATCHERS ----
   matches(q, keywords) {
     return keywords.some(k => q.includes(k));
+  }
+
+  isGreeting(q) {
+    return /^(hi|hello|hey|yo|hola|namaste|good\s+morning|good\s+afternoon|good\s+evening)\b/i.test(q);
+  }
+
+  isSmallTalk(q) {
+    return this.matches(q, [
+      'how are you',
+      'who are you',
+      'what can you do',
+      'thanks',
+      'thank you'
+    ]);
+  }
+
+  handleSmallTalk(q) {
+    if (this.isGreeting(q)) {
+      return `Hi! 👋 I can help with invoice/PO/contract analysis, and I can also answer general questions when AI is available.<br><br>Try asking anything, or start with:<br>• <em>"Show all invoices"</em><br>• <em>"Compare INV-KL-2025-0872 with its PO"</em><br>• <em>"What deviations exist?"</em>`;
+    }
+
+    if (this.matches(q, ['how are you'])) {
+      return 'Doing great — ready to help. Ask me any invoice question or a general query.';
+    }
+
+    if (this.matches(q, ['who are you'])) {
+      return 'I’m your Invoice AI assistant. I help validate invoices against POs/contracts and can answer general questions when AI service is enabled.';
+    }
+
+    if (this.matches(q, ['thanks', 'thank you'])) {
+      return 'You’re welcome! Ask me anything anytime.';
+    }
+
+    return 'I’m here to help. You can ask about invoices, contracts, POs, deviations, totals, or general questions.';
   }
 
   matchesVendor(q) {
@@ -534,12 +571,12 @@ class ChatEngine {
     const conId = this.extractContractId(q);
     if (conId) return this.getContractDetails(conId);
 
-    return `I'm not sure how to answer that. Here are some things you can ask me:<br><br>
+    return `I couldn't confidently answer that right now. Here are some things you can ask me:<br><br>
       • <em>"Show all POs and their amounts"</em><br>
       • <em>"Compare INV-KL-2025-0872 with its PO"</em><br>
       • <em>"What deviations exist in invoices?"</em><br>
       • <em>"Tell me about Rajesh Steel"</em><br>
       • <em>"What are the tolerance rules?"</em><br><br>
-      Type <strong>help</strong> for a full list of commands.`;
+      Type <strong>help</strong> for a full list of commands.<br><small style="color:#6B7280">For broad general Q&A, make sure <strong>OPENAI_API_KEY</strong> is set in your deployment environment.</small>`;
   }
 }
