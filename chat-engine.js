@@ -4,13 +4,89 @@
 // ============================================================
 
 class ChatEngine {
-  constructor() {
+  constructor(options = {}) {
     this.context = []; // conversation history
+    this.apiBaseUrl = options.apiBaseUrl || '';
+    this.ingestedDocuments = [];
   }
 
-  respond(query) {
-    const q = query.toLowerCase().trim();
+  setIngestedDocuments(documents = []) {
+    this.ingestedDocuments = Array.isArray(documents) ? documents : [];
+  }
+
+  buildKnowledgeContext(runtimeContext = {}) {
+    const processedInvoices = Array.isArray(runtimeContext.processedInvoices)
+      ? runtimeContext.processedInvoices
+      : [];
+
+    const poLines = Object.values(PURCHASE_ORDERS).map(po =>
+      `${po.id} | ${po.vendorName} | Total: Rs.${po.total} | Contract: ${po.contractId}`
+    );
+    const contractLines = Object.values(CONTRACTS).map(c =>
+      `${c.id} | ${c.vendorName} | Period: ${c.startDate} to ${c.endDate} | GST: ${c.gstRate}%`
+    );
+    const invoiceLines = Object.values(INVOICES).map(inv =>
+      `${inv.id} | ${inv.vendorName} | PO: ${inv.poId} | Total: Rs.${inv.total} | GST: ${inv.gstRate}%`
+    );
+
+    const processedLines = processedInvoices.map(r =>
+      `${r.invoiceId} | Status: ${r.overallStatus} | Deviation: Rs.${Math.abs(r.summary.totalDeviation || 0)} | Issues: ${r.deviations.length}`
+    );
+
+    const docLines = this.ingestedDocuments.slice(0, 30).map(doc => {
+      const excerpt = (doc.excerpt || '').slice(0, 350);
+      return `${doc.fileName} (${doc.type}, ${doc.size} bytes)\nExcerpt: ${excerpt || 'No text extracted.'}`;
+    });
+
+    return [
+      `Tolerance Rules: Price ±${TOLERANCE.price}%, Quantity ±${TOLERANCE.quantity}%, Tax ±${TOLERANCE.tax}%`,
+      `Purchase Orders:\n${poLines.join('\n')}`,
+      `Contracts:\n${contractLines.join('\n')}`,
+      `Invoices:\n${invoiceLines.join('\n')}`,
+      processedLines.length ? `Processed Validation Results:\n${processedLines.join('\n')}` : 'Processed Validation Results: None yet.',
+      docLines.length ? `Ingested ZIP Documents:\n${docLines.join('\n\n')}` : 'Ingested ZIP Documents: None uploaded yet.'
+    ].join('\n\n');
+  }
+
+  async respondWithAI(query, runtimeContext = {}) {
     this.context.push({ role: 'user', text: query });
+
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/api/ask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: query,
+          history: this.context.slice(-8),
+          knowledgeContext: this.buildKnowledgeContext(runtimeContext)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI endpoint error ${response.status}`);
+      }
+
+      const payload = await response.json();
+      const answer = payload.answer || '';
+      if (!answer.trim()) {
+        throw new Error('AI returned empty answer.');
+      }
+
+      this.context.push({ role: 'bot', text: answer });
+      return answer.replace(/\n/g, '<br>');
+    } catch (error) {
+      const fallback = this.respond(query, { skipContext: true });
+      this.context.push({ role: 'bot', text: fallback });
+      return `${fallback}<br><br><small style="color:#6B7280">(AI unavailable, showing rule-based response.)</small>`;
+    }
+  }
+
+  respond(query, options = {}) {
+    const q = query.toLowerCase().trim();
+    const shouldTrack = !options.skipContext;
+    if (shouldTrack) {
+      this.context.push({ role: 'user', text: query });
+    }
 
     let response = '';
 
@@ -79,7 +155,9 @@ class ChatEngine {
       response = this.smartFallback(q);
     }
 
-    this.context.push({ role: 'bot', text: response });
+    if (shouldTrack) {
+      this.context.push({ role: 'bot', text: response });
+    }
     return response;
   }
 

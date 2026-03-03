@@ -3,15 +3,35 @@
 // ============================================================
 
 const engine = new MatchingEngine(TOLERANCE);
-const chatEngine = new ChatEngine();
+const chatEngine = new ChatEngine({ apiBaseUrl: window.location.origin });
 const processedInvoices = [];
 
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', () => {
+  setupSampleSection();
   renderSampleCards();
   setupUploadZone();
+  setupKnowledgeZipUpload();
   setupScrollAnimations();
 });
+
+function setupSampleSection() {
+  const content = document.getElementById('sampleContent');
+  const toggleBtn = document.getElementById('sampleToggleBtn');
+  if (!content || !toggleBtn) return;
+
+  content.classList.add('collapsed');
+  toggleBtn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleSampleInvoices() {
+  const content = document.getElementById('sampleContent');
+  const toggleBtn = document.getElementById('sampleToggleBtn');
+  if (!content || !toggleBtn) return;
+
+  const isCollapsed = content.classList.toggle('collapsed');
+  toggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+}
 
 // ---- SAMPLE CARDS ----
 function renderSampleCards() {
@@ -503,7 +523,7 @@ function toggleChat() {
   }
 }
 
-function sendChat() {
+async function sendChat() {
   const input = document.getElementById('chatInput');
   const query = input.value.trim();
   if (!query) return;
@@ -511,17 +531,26 @@ function sendChat() {
   addChatMessage(query, 'user');
   input.value = '';
 
+  const sendBtn = document.querySelector('.chat-send');
+  if (sendBtn) sendBtn.disabled = true;
+
   // Hide suggestions after first message
   document.getElementById('chatSuggestions').style.display = 'none';
 
   // Simulate typing delay
   const typingEl = addChatMessage('<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>', 'bot');
 
-  setTimeout(() => {
-    const response = chatEngine.respond(query);
+  try {
+    await sleep(350 + Math.random() * 500);
+    const response = await chatEngine.respondWithAI(query, { processedInvoices });
     typingEl.querySelector('.chat-msg-bubble').innerHTML = response;
     scrollChatToBottom();
-  }, 400 + Math.random() * 600);
+  } catch (error) {
+    const reason = error && error.message ? ` (${error.message})` : '';
+    typingEl.querySelector('.chat-msg-bubble').innerHTML = `Something went wrong while answering. Please try again${reason}.`;
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+  }
 }
 
 function sendSuggestion(text) {
@@ -550,6 +579,43 @@ function addChatMessage(content, role) {
 function scrollChatToBottom() {
   const container = document.getElementById('chatMessages');
   container.scrollTop = container.scrollHeight;
+}
+
+async function setupKnowledgeZipUpload() {
+  const input = document.getElementById('zipKnowledgeInput');
+  const status = document.getElementById('zipUploadStatus');
+  if (!input || !status) return;
+
+  input.addEventListener('change', async () => {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+
+    status.textContent = `Uploading ${file.name}...`;
+
+    try {
+      const formData = new FormData();
+      formData.append('zipFile', file);
+
+      const response = await fetch('/api/ingest-zip', {
+        method: 'POST',
+        body: formData
+      });
+
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error || 'ZIP upload failed.');
+      }
+
+      chatEngine.setIngestedDocuments(payload.documents || []);
+      status.textContent = `${payload.fileName} uploaded (${payload.count} files indexed).`;
+      addChatMessage(`Knowledge ZIP uploaded: <strong>${payload.fileName}</strong><br>Indexed files: <strong>${payload.count}</strong>`, 'bot');
+    } catch (error) {
+      status.textContent = `Upload failed: ${error.message}`;
+      addChatMessage(`I couldn't ingest that ZIP: ${error.message}`, 'bot');
+    } finally {
+      input.value = '';
+    }
+  });
 }
 
 // ---- UTILS ----

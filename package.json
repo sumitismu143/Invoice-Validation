@@ -1,15 +1,22 @@
 {
   "name": "invoice-validation-tool",
   "version": "1.0.0",
-  "description": "",
+  "description": "Invoice validation demo with AI-powered Q&A and ZIP ingestion",
   "main": "app.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "adm-zip": "^0.5.16",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "openai": "^6.7.0",
     "pdfkit": "^0.17.2"
   }
 }

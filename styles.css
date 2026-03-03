@@ -381,6 +381,48 @@ body {
   margin-bottom: 24px;
 }
 
+.sample-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.sample-toggle-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.sample-toggle-title .material-icons-round { color: var(--primary); font-size: 20px; }
+
+.sample-toggle-icon {
+  font-size: 22px;
+  color: var(--gray-500);
+  transition: transform 0.2s ease;
+}
+
+.sample-toggle[aria-expanded="true"] .sample-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.sample-content {
+  margin-top: 14px;
+}
+
+.sample-content.collapsed {
+  display: none;
+}
+
 .sample-selector h3 {
   display: flex;
   align-items: center;
@@ -1449,6 +1491,32 @@ body {
 
 .chat-msg.user .chat-msg-bubble code {
   background: rgba(255,255,255,0.2);
+}
+
+.chat-ingest {
+  padding: 10px 20px 12px;
+  background: #fff;
+  border-top: 1px solid var(--gray-100);
+}
+
+.chat-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.chat-upload-label .material-icons-round {
+  font-size: 16px;
+}
+
+.chat-upload-status {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--gray-500);
 }
 
 /* Chat suggestion chips */

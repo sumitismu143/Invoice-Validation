@@ -137,9 +137,14 @@
 
       <!-- Sample Invoice Selector -->
       <div class="sample-selector">
-        <h3><span class="material-icons-round">folder_open</span> Sample Invoices for Demo</h3>
-        <p class="sample-hint">Click any invoice below to simulate an upload, or drag &amp; drop your own file</p>
-        <div class="sample-grid" id="sampleGrid"></div>
+        <button class="sample-toggle" id="sampleToggleBtn" type="button" onclick="toggleSampleInvoices()" aria-expanded="false" aria-controls="sampleContent">
+          <span class="sample-toggle-title"><span class="material-icons-round">folder_open</span> Sample Invoices for Demo</span>
+          <span class="material-icons-round sample-toggle-icon" id="sampleToggleIcon">expand_more</span>
+        </button>
+        <div class="sample-content collapsed" id="sampleContent">
+          <p class="sample-hint">Click any invoice below to simulate an upload, or drag &amp; drop your own file</p>
+          <div class="sample-grid" id="sampleGrid"></div>
+        </div>
       </div>
 
       <!-- Upload Zone -->
@@ -292,6 +297,14 @@
           Try asking: <em>"What's the total for PO-2025-1001?"</em> or <em>"Show me deviations in Kumar Logistics invoice"</em>
         </div>
       </div>
+    </div>
+    <div class="chat-ingest">
+      <label class="chat-upload-label" for="zipKnowledgeInput">
+        <span class="material-icons-round">upload_file</span>
+        Upload PO/Contract/Invoice ZIP
+      </label>
+      <input type="file" id="zipKnowledgeInput" accept=".zip" hidden>
+      <div class="chat-upload-status" id="zipUploadStatus">No ZIP uploaded yet.</div>
     </div>
     <div class="chat-suggestions" id="chatSuggestions">
       <button onclick="sendSuggestion('Show all POs and their amounts')">Show all POs</button>
